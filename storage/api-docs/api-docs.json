@@ -1,0 +1,31 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "L5 OpenApi",
+        "description": "L5 Swagger OpenApi description",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/usuarios": {},
+        "/api/test": {
+            "get": {
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Test endpoint",
+                "operationId": "ea9a781fbf9ac8a6c37b2ebd371cc89b",
+                "responses": {
+                    "200": {
+                        "description": "Test successful"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Test",
+            "description": "Test"
+        }
+    ]
+}
