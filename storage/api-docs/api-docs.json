@@ -1,31 +1,341 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "L5 OpenApi",
-        "description": "L5 Swagger OpenApi description",
+        "title": "Infonet",
+        "description": "",
         "version": "1.0.0"
     },
     "paths": {
-        "/api/usuarios": {},
-        "/api/test": {
-            "get": {
+        "/api/": {},
+        "/api/login": {
+            "post": {
                 "tags": [
-                    "Test"
+                    "Autenticação"
                 ],
-                "summary": "Test endpoint",
-                "operationId": "ea9a781fbf9ac8a6c37b2ebd371cc89b",
+                "summary": "Autenticação de usuário",
+                "description": "Realiza login e retorna o token JWT e nome do usuário",
+                "operationId": "c64fdb270498e81061530febf0dec4be",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "login",
+                                    "senha"
+                                ],
+                                "properties": {
+                                    "login": {
+                                        "type": "string",
+                                        "example": "usuario@email.com"
+                                    },
+                                    "senha": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "Test successful"
+                        "description": "Login realizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        },
+                                        "nome": {
+                                            "type": "string",
+                                            "example": "João da Silva"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciais inválidas"
+                    }
+                }
+            }
+        },
+        "/api/servicos": {
+            "get": {
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Listar serviços disponíveis",
+                "description": "Retorna a lista de serviços cadastrados",
+                "operationId": "ae4ccb9e6f5053fd823ae04ca3f5db2b",
+                "responses": {
+                    "200": {
+                        "description": "Serviços retornados com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "nome": {
+                                                "type": "string",
+                                                "example": "Transporte de Cargas"
+                                            },
+                                            "situacao": {
+                                                "type": "string",
+                                                "example": "1(ativo) ou 0(falso)"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/coordenadas/{endereco}": {
+            "get": {
+                "tags": [
+                    "Geolocalização"
+                ],
+                "summary": "Buscar coordenadas geográficas de um endereço",
+                "description": "Consulta latitude e longitude a partir de um endereço. Requer autenticação via Basic Auth.",
+                "operationId": "380d0e1e2d30427554517357d918153d",
+                "parameters": [
+                    {
+                        "name": "endereco",
+                        "in": "query",
+                        "description": "Endereço completo para geocodificação",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Av. Paulista, 1000, São Paulo, SP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Coordenadas encontradas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "latitude": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": -23.561684
+                                        },
+                                        "longitude": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": -46.656139
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Endereço não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/prestadores/buscar": {
+            "post": {
+                "tags": [
+                    "Prestadores"
+                ],
+                "summary": "Buscar prestadores de serviço",
+                "description": "Retorna uma lista de prestadores com base nos dados de origem, destino, serviço, filtros e ordenação.",
+                "operationId": "2b2791491f323979b6e85d261cd2d830",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "origem",
+                                    "destino",
+                                    "idServico"
+                                ],
+                                "properties": {
+                                    "origem": {
+                                        "properties": {
+                                            "cidade": {
+                                                "type": "string"
+                                            },
+                                            "UF": {
+                                                "type": "string"
+                                            },
+                                            "latitude": {
+                                                "type": "number",
+                                                "format": "float"
+                                            },
+                                            "longitude": {
+                                                "type": "number",
+                                                "format": "float"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "destino": {
+                                        "properties": {
+                                            "cidade": {
+                                                "type": "string"
+                                            },
+                                            "UF": {
+                                                "type": "string"
+                                            },
+                                            "latitude": {
+                                                "type": "number",
+                                                "format": "float"
+                                            },
+                                            "longitude": {
+                                                "type": "number",
+                                                "format": "float"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "idServico": {
+                                        "type": "integer"
+                                    },
+                                    "quantidade": {
+                                        "description": "Máximo 100",
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "ordenacao": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "enum": [
+                                                "valor_total",
+                                                "distancia_total",
+                                                "status"
+                                            ]
+                                        }
+                                    },
+                                    "filtros": {
+                                        "properties": {
+                                            "cidade": {
+                                                "type": "string"
+                                            },
+                                            "UF": {
+                                                "type": "string"
+                                            },
+                                            "status": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Lista de prestadores encontrados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Prestador"
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     },
+    "components": {
+        "schemas": {
+            "Prestador": {
+                "required": [
+                    "id",
+                    "nome",
+                    "cidade",
+                    "UF",
+                    "valor_total",
+                    "distancia_total",
+                    "status"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nome": {
+                        "type": "string",
+                        "example": "João dos Fretes"
+                    },
+                    "cidade": {
+                        "type": "string",
+                        "example": "Campinas"
+                    },
+                    "UF": {
+                        "type": "string",
+                        "example": "SP"
+                    },
+                    "valor_total": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 150
+                    },
+                    "distancia_total": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 23.5
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "ativo"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
     "tags": [
         {
-            "name": "Test",
-            "description": "Test"
+            "name": "Autenticação",
+            "description": "Autenticação"
+        },
+        {
+            "name": "Serviços",
+            "description": "Serviços"
+        },
+        {
+            "name": "Geolocalização",
+            "description": "Geolocalização"
+        },
+        {
+            "name": "Prestadores",
+            "description": "Prestadores"
         }
     ]
 }
